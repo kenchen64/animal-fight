@@ -9,17 +9,17 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     this.load.image(
       "dog",
-      "client/src/game/dog.png"
+      "https://www.kindpng.com/picc/m/43-434609_puppy-cute-puppies-dog-cartoon-images-clip-art.png"
     );
 
     this.load.image(
       "cat",
-      "client/src/game/cat.png"
+      "https://www.kindpng.com/picc/m/15-151711_transparent-black-cat-png-domestic-short-haired-cat.png"
     );
 
     this.load.image(
       "fox",
-      "client/src/game/fox.png"
+      "https://www.kindpng.com/picc/m/325-3257549_the-little-fox-badge-fox-graphic-hd-png.png"
     );
   }
 
