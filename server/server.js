@@ -19,9 +19,7 @@ const io = new Server(server, {
   },
 });
 
-mongoose.connect(
-  "mongodb+srv://kenchen6464_db_user:Chen6464-@cluster0.9uzmb2u.mongodb.net/?appName=Cluster0"
-);
+mongoose.connect(process.env.MONGO_URI);
 
 const players = {};
 
