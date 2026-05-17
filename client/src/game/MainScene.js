@@ -9,17 +9,17 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     this.load.image(
       "dog",
-      "https://github.com/kenchen64/animal-fight/blob/main/client/src/game/dog.png?raw=true"
+      "src/game/dog.png"
     );
 
     this.load.image(
       "cat",
-      "https://github.com/kenchen64/animal-fight/blob/main/client/src/game/cat.png?raw=true"
+      "src/game/cat.png"
     );
 
     this.load.image(
       "fox",
-      "https://github.com/kenchen64/animal-fight/blob/main/client/src/game/fox.png?raw=true"
+      "src/game/fox.png"
     );
   }
 
