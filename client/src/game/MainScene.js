@@ -9,17 +9,17 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     this.load.image(
       "dog",
-      "src/game/dog.png"
+      "/src/game/dog.png"
     );
 
     this.load.image(
       "cat",
-      "src/game/cat.png"
+      "/src/game/cat.png"
     );
 
     this.load.image(
       "fox",
-      "src/game/fox.png"
+      "/src/game/fox.png"
     );
   }
 
