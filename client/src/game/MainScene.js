@@ -121,6 +121,27 @@ export default class MainScene extends Phaser.Scene {
       });
     });
 
+    socket.on('skillEffect', data => {
+      const target = this.players[data.target]
+
+      if (!target) return
+
+      const effect = this.add.sprite(
+        target.sprite.x,
+        target.sprite.y,
+        'skill'
+      )
+
+      this.tweens.add({
+        targets: effect,
+        alpha: 0,
+        duration: 500,
+        onComplete: () => {
+          effect.destroy()
+        }
+      })
+    })
+    
     this.keys =
       this.input.keyboard.addKeys({
         up: "W",
