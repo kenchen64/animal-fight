@@ -225,7 +225,7 @@ vy += this.joyY * speed;
 
 me.sprite.x += vx;
 me.sprite.y += vy;
-    });
+    
 
     if (
       Phaser.Input.Keyboard.JustDown(
@@ -276,5 +276,4 @@ if (
 
   }
 
-}
 }
