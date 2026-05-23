@@ -36,6 +36,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
+    this.add.image(
+      960,
+      540,
+      "bg"
+    );
 
     this.players = {};
 
