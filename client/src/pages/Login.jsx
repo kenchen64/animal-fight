@@ -1,48 +1,63 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { useState } from "react";
+
+import axios from "axios";
 
 export default function Login() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
 
   const login = async () => {
     const res = await axios.post(
-      './pages/login',
+      "https://animal-fight.onrender.com/auth/login",
       {
         username,
-        password
+        password,
       }
-    )
+    );
 
     localStorage.setItem(
-      'token',
+      "token",
       res.data.token
-    )
-    localStorage.setItem(
-      'username',
-      username
-    )
+    );
 
-    window.location.href = '/'
-  }
+    localStorage.setItem(
+      "username",
+      username
+    );
+
+    window.location.href =
+      "/select";
+  };
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>玩家登入</h1>
 
       <input
-        placeholder='username'
-        onChange={e => setUsername(e.target.value)}
+        placeholder="帳號"
+        onChange={(e) =>
+          setUsername(
+            e.target.value
+          )
+        }
       />
 
       <input
-        type='password'
-        placeholder='password'
-        onChange={e => setPassword(e.target.value)}
+        type="password"
+        placeholder="密碼"
+        onChange={(e) =>
+          setPassword(
+            e.target.value
+          )
+        }
       />
+
       <button onClick={login}>
-        Login
+        登入
       </button>
     </div>
-  )
+  );
 }
