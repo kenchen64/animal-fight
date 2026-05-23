@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
 
 const socket = io(
-  "https://animal-fight.onrender.com"
+  "https://animal-fight.onrender.com", {
+    transports: ["websocket"]}
 );
 
 export default socket;
