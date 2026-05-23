@@ -130,17 +130,22 @@ export default class MainScene extends Phaser.Scene {
         target.sprite.x,
         target.sprite.y,
         'skill'
-      )
-
+      );
+      
+      effect.setScale(2);
+      effect.setDepth(999);
+      
       this.tweens.add({
         targets: effect,
         alpha: 0,
+        scaleX: 4,
+        scaleY: 4,
         duration: 500,
         onComplete: () => {
-          effect.destroy()
+          effect.destroy();
         }
-      })
-    })
+      });
+    });
     
     this.keys =
       this.input.keyboard.addKeys({
