@@ -1,117 +1,156 @@
-import Phaser from "phaser";
-import socket from "../socket";
+import Phaser from 'phaser'
+import socket from '../socket'
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
-    super("main");
+    super('main')
   }
 
   preload() {
-    this.load.image(
-      "dog",
-      "assets/dog.png"
-    );
-
-    this.load.image(
-      "cat",
-      "assets/cat.png"
-    );
-
-    this.load.image(
-      "fox",
-      "assets/fox.png"
-    );
+    this.load.image('dog', '/assets/dog.png')
+    this.load.image('cat', '/assets/cat.png')
+    this.load.image('fox', '/assets/fox.png')
+    this.load.image('skill', '/assets/skill.png')
   }
 
   create() {
-    this.players = {};
+    this.players = {}
 
-    const name = prompt("輸入名字");
-    const animal = prompt("dog / cat / fox");
+    const username = localStorage.getItem('username')
 
-    socket.emit("joinGame", {
-      name,
-      animal,
-    });
+    const animal = localStorage.getItem('animal') || 'dog'
 
-    socket.on("players", (players) => {
-      Object.keys(players).forEach((id) => {
-        const player = players[id];
+    socket.emit('join', {
+      username,
+      animal
+    })
+
+    socket.on('players', players => {
+      Object.keys(players).forEach(id => {
+        const player = players[id]
 
         if (!this.players[id]) {
-          this.players[id] = this.add.sprite(
+          const sprite = this.add.sprite(
             player.x,
             player.y,
             player.animal
-          );
+          )
 
-          this.players[id].setScale(2);
+          sprite.setScale(2)
+          const hpBar = this.add.rectangle(
+            player.x,
+            player.y - 40,
+            50,
+            8,
+            0xff0000
+          )
 
-          const text = this.add.text(
+          const name = this.add.text(
             player.x - 20,
-            player.y - 50,
-            player.name
-          );
+            player.y - 70,
+            player.username,
+            {
+              fontSize: '16px'
+            }
+          )
 
-          this.players[id].nameText = text;
+          this.players[id] = {
+            sprite,
+            hpBar,
+            name
+          }        }
+
+        this.players[id].sprite.x = player.x
+        this.players[id].sprite.y = player.y
+
+        this.players[id].hpBar.x = player.x
+        this.players[id].hpBar.y = player.y - 40
+
+        this.players[id].hpBar.width =
+          (player.hp / player.maxHp) * 50
+
+        this.players[id].name.x = player.x - 20
+        this.players[id].name.y = player.y - 70
+      })
+    })
+
+    socket.on('skillEffect', data => {
+      const target = this.players[data.target]
+
+      if (!target) return
+
+      const effect = this.add.sprite(        target.sprite.x,
+        target.sprite.y,
+        'skill'
+      )
+
+      this.tweens.add({
+        targets: effect,
+        alpha: 0,
+        duration: 500,
+        onComplete: () => {
+          effect.destroy()
         }
+      })
+    })
 
-        this.players[id].x = player.x;
-        this.players[id].y = player.y;
-
-        this.players[id].nameText.setPosition(
-          player.x - 20,
-          player.y - 50
-        );
-      });
-    });
-
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.attackKey =
-      this.input.keyboard.addKey(
-        Phaser.Input.Keyboard.KeyCodes.J
-      );
-  }
+    this.keys = this.input.keyboard.addKeys({
+      up: 'W',
+      down: 'S',
+      left: 'A',
+      right: 'D',
+      attack: 'J',
+      skill: 'K'
+    })  }
 
   update() {
-    const myId = socket.id;
+    const me = this.players[socket.id]
 
-    if (!this.players[myId]) return;
+    if (!me) return
 
-    let speed = 5;
+    let speed = 5
 
-    if (this.cursors.left.isDown) {
-      this.players[myId].x -= speed;
+    if (this.keys.left.isDown) {
+      me.sprite.x -= speed
     }
 
-    if (this.cursors.right.isDown) {
-      this.players[myId].x += speed;
+    if (this.keys.right.isDown) {
+      me.sprite.x += speed
     }
 
-    if (this.cursors.up.isDown) {
-      this.players[myId].y -= speed;
+    if (this.keys.up.isDown) {
+      me.sprite.y -= speed
     }
 
-    if (this.cursors.down.isDown) {
-      this.players[myId].y += speed;
+    if (this.keys.down.isDown) {      me.sprite.y += speed
     }
 
-    socket.emit("move", {
-      x: this.players[myId].x,
-      y: this.players[myId].y,
-    });
+    socket.emit('move', {
+      x: me.sprite.x,
+      y: me.sprite.y
+    })
 
     if (
       Phaser.Input.Keyboard.JustDown(
-        this.attackKey
+        this.keys.attack
       )
     ) {
-      Object.keys(this.players).forEach((id) => {
-        if (id !== myId) {
-          socket.emit("attack", id);
+      Object.keys(this.players).forEach(id => {
+        if (id !== socket.id) {
+          socket.emit('attack', id)
         }
-      });
+      })
+    }
+
+    if (
+      Phaser.Input.Keyboard.JustDown(
+        this.keys.skill      )
+    ) {
+      Object.keys(this.players).forEach(id => {
+        if (id !== socket.id) {
+          socket.emit('skill', id)
+        }
+      })
     }
   }
 }
