@@ -57,6 +57,11 @@ io.on('connection', socket => {
   socket.on('join', data => {
     const base = stats[data.animal]
 
+if (!base) {
+  console.error('動物類型錯誤 -> "${data.animal}"');
+  return;
+}
+    
     players[socket.id] = {
       id: socket.id,
       username: data.username,
