@@ -160,36 +160,42 @@ export default class MainScene extends Phaser.Scene {
     this.createJoystick();
   }
 
-  createJoystick() {
-    this.joystick =
-      nipplejs.create({
-        zone: document.body,
-        mode: "static",
+createJoystick() {
 
-        position: {
-          left: "100px",
-          bottom: "100px",
-        },
-
-        color: "white",
-      });
-
-    this.joyX = 0;
-    this.joyY = 0;
-
-    this.joystick.on(
-      "move",
-      (evt, data) => {
-        this.joyX = data.vector.x;
-        this.joyY = data.vector.y;
-      }
-    );
-
-    this.joystick.on("end", () => {
+  this.joyX = 0;
+  this.joyY = 0;
+  this.joystick =
+    nipplejs.create({
+    zone:
+      document.getElementById(
+        "game-container"
+      ),
+    mode: "static",
+    position: {
+      left: "80px",
+      bottom: "80px",
+    },
+    size: 120,
+    color: "white",
+  });
+  this.joystick.on(
+    "move",
+    (evt, data) => {
+      if (!data.vector) return;
+      this.joyX =
+        data.vector.x;
+      this.joyY =
+        data.vector.y;
+    }
+  );
+  this.joystick.on(
+    "end",
+    () => {
       this.joyX = 0;
       this.joyY = 0;
-    });
-  }
+    }
+  );
+}
 
   update() {
     const me =
@@ -197,29 +203,28 @@ export default class MainScene extends Phaser.Scene {
 
     if (!me) return;
 
-    let speed = 5;
+    const speed = 5;
 
-    if (this.keys.left.isDown)
-      me.sprite.x -= speed;
+let vx = 0;
+let vy = 0;
 
-    if (this.keys.right.isDown)
-      me.sprite.x += speed;
+if (this.keys.left.isDown)
+  vx = -speed;
 
-    if (this.keys.up.isDown)
-      me.sprite.y -= speed;
+if (this.keys.right.isDown)
+  vx = speed;
 
-    if (this.keys.down.isDown)
-      me.sprite.y += speed;
+if (this.keys.up.isDown)
+  vy = -speed;
 
-    me.sprite.x +=
-      this.joyX * speed;
+if (this.keys.down.isDown)
+  vy = speed;
 
-    me.sprite.y +=
-      this.joyY * speed;
+vx += this.joyX * speed;
+vy += this.joyY * speed;
 
-    socket.emit("move", {
-      x: me.sprite.x,
-      y: me.sprite.y,
+me.sprite.x += vx;
+me.sprite.y += vy;
     });
 
     if (
@@ -239,21 +244,37 @@ export default class MainScene extends Phaser.Scene {
       );
     }
 
-    if (
-      Phaser.Input.Keyboard.JustDown(
-        this.keys.skill
-      )
-    ) {
-      Object.keys(this.players).forEach(
-        (id) => {
-          if (id !== socket.id) {
-            socket.emit(
-              "skill",
-              id
-            );
-          }
-        }
-      );
-    }
+if (
+
+  Phaser.Input.Keyboard.JustDown(
+    this.keys.skill
+  )
+
+) {
+
+  const now = Date.now();
+
+  if (
+    now - this.lastSkill > 1000
+  ) {
+
+    this.lastSkill = now;
+
+    Object.keys(this.players)
+      .forEach(id => {
+
+      if (id !== socket.id) {
+
+        socket.emit(
+          "skill",
+          id
+        );
+
+      }
+
+    });
+
   }
+
+}
 }
