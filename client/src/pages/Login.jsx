@@ -7,7 +7,7 @@ export default function Login() {
 
   const login = async () => {
     const res = await axios.post(
-      'https://animal-fight.onrender.com/auth/login',
+      './pages/login',
       {
         username,
         password
