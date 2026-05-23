@@ -19,7 +19,7 @@ export default function Register() {
   const register = async () => {
     try {
       await axios.post(
-        "https://你的後端.onrender.com/auth/register",
+        "https://animal-fight.onrender.com/auth/register",
         {
           username,
           password,
