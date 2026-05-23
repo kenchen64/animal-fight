@@ -1,18 +1,41 @@
-import { useEffect } from 'react'
-import Phaser from 'phaser'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-import config from './game/config'
+import Login from "./pages/Login";
 
-function App() {
-  useEffect(() => {
-    const game = new Phaser.Game(config)
+import Register from "./pages/Register";
 
-    return () => {
-      game.destroy(true)
-    }
-  }, [])
+import Select from "./pages/Select";
 
-  return <div id='game'></div>
+import Game from "./pages/Game";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        <Route
+          path="/select"
+          element={<Select />}
+        />
+
+        <Route
+          path="/"
+          element={<Game />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
