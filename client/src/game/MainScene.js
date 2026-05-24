@@ -8,11 +8,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg", "assets/background.png");
-    this.load.image("dog", "assets/dog.png");
-    this.load.image("cat", "assets/cat.png");
-    this.load.image("fox", "assets/fox.png");
-    this.load.image("skill", "assets/skill.png");
+    this.load.image("bg", "/assets/background.png");
+    this.load.image("dog", "/assets/dog.png");
+    this.load.image("cat", "/assets/cat.png");
+    this.load.image("fox", "/assets/fox.png");
+    this.load.image("skill", "/assets/skill.png");
   }
 
   create() {
