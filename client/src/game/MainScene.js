@@ -169,7 +169,7 @@ export default class MainScene extends Phaser.Scene {
       });
 
       this.joystick.on("move", (evt, data) => {
-        if (!data.vector) return;
+        if (!data || !data.vector) return;
         this.joyX = data.vector.x;
         this.joyY = data.vector.y;
       });
