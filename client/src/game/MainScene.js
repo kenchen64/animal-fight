@@ -201,5 +201,17 @@ export default class MainScene extends Phaser.Scene {
         socket.emit(type, id);
       }
     });
+handleShutdown() {
+  // 移除所有在此場景中建立的 socket 監聽器
+  socket.off("players");
+  socket.off("dead");
+  socket.off("skillEffect");
+
+  // 銷毀 NippleJS 搖桿實例，釋放 DOM 節點
+  if (this.joystick) {
+    this.joystick.destroy();
+  }
+}
+
   }
 }
