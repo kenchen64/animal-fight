@@ -3,13 +3,14 @@ import MainScene from "./MainScene";
 
 export default {
   type: Phaser.AUTO,
+  width: 1920,                      
+  height: 1080,
   parent: "game-container", 
 
   scale: {
     mode: Phaser.Scale.FIT,           
     autoCenter: Phaser.Scale.CENTER_BOTH, 
-    width: 1920,                      
-    height: 1080,
+    orientation: Phaser.Scale.Orientation.LANDSCAPE
   },
 
   // 📌 核心新增：開啟 Phaser 的 DOM 容器功能，讓搖桿可以隨著遊戲畫面一起縮放
