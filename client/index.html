@@ -29,10 +29,10 @@
       /* 📌 新增：單獨給搖桿使用的全螢幕/透明層，確保觸控不會與遊戲畫布衝突 */
       #joystick-container {
         position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 300px;  /* 限制搖桿的可觸控範圍在左下角區域 */
-        height: 300px;
+        bottom: 30px;
+        left: 30px;
+        width: 150px;  /* 限制搖桿的可觸控範圍在左下角區域 */
+        height: 150px;
         z-index: 10;   /* 確保疊在 Phaser 遊戲畫布的最上方 */
         pointer-events: auto; /* 開啟觸控事件 */
       }
