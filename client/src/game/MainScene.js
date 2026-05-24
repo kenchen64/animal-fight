@@ -29,9 +29,11 @@ export default class MainScene extends Phaser.Scene {
     // 2. 通知後端加入遊戲
     socket.emit("join", { username, animal });
 
-    // 3. 監聽全體玩家狀態更新
+     // 3. 監聽全體玩家狀態更新（安全防禦版）
     socket.on("players", (serverPlayers) => {
-      // 📌 修正：處理斷線清除（如果後端資料沒有這個 ID，就將前端物件銷毀）
+      if (!serverPlayers) return;
+
+      // 處理斷線清除
       Object.keys(this.players).forEach((id) => {
         if (!serverPlayers[id]) {
           this.removePlayer(id);
@@ -40,6 +42,11 @@ export default class MainScene extends Phaser.Scene {
 
       Object.keys(serverPlayers).forEach((id) => {
         const player = serverPlayers[id];
+        
+        // 📌 核心安全檢查 1：如果後端資料殘缺，直接跳過該玩家，防止前端 Crash
+        if (!player || typeof player.x !== 'number' || typeof player.y !== 'number') {
+          return; 
+        }
 
         // 排除已死亡的玩家
         if (player.dead) {
@@ -54,14 +61,17 @@ export default class MainScene extends Phaser.Scene {
 
         // 建立新加入的玩家物件
         if (!this.players[id]) {
-          const sprite = this.physics.add.sprite(player.x, player.y, player.animal);
+          // 📌 核心安全檢查 2：確保動物種類圖片存在，否則 Phaser 會因為找不到 Key 報錯
+          const validAnimals = ["dog", "cat", "fox"];
+          const animalKey = validAnimals.includes(player.animal) ? player.animal : "dog";
+
+          const sprite = this.physics.add.sprite(player.x, player.y, animalKey);
           sprite.setScale(2);
 
-          // 📌 修正：血條改為向左對齊（Origin 設為 0, 0.5），並新增黑色背景底條
           const hpBarBg = this.add.rectangle(player.x - 30, player.y - 40, 60, 8, 0x000000).setOrigin(0, 0.5);
           const hpBar = this.add.rectangle(player.x - 30, player.y - 40, 60, 8, 0xff0000).setOrigin(0, 0.5);
           
-          const name = this.add.text(player.x, player.y - 70, player.username, {
+          const name = this.add.text(player.x, player.y - 70, player.username || "Player", {
             fontSize: "18px",
             color: "#ffffff",
           }).setOrigin(0.5);
@@ -79,15 +89,17 @@ export default class MainScene extends Phaser.Scene {
         this.players[id].sprite.x = player.x;
         this.players[id].sprite.y = player.y;
 
-        // 📌 修正：血條跟隨玩家時，要把寬度起點向左偏移 30 像素（寬度的一半）
         this.players[id].hpBarBg.x = player.x - 30;
         this.players[id].hpBarBg.y = player.y - 40;
 
         this.players[id].hpBar.x = player.x - 30;
         this.players[id].hpBar.y = player.y - 40;
         
-        // 📌 修正：使用 setSize 修改寬度，這樣就會往左邊扣血，而不是往中間縮
-        const currentHpWidth = Math.max(0, (player.hp / player.maxHp) * 60);
+        // 📌 核心安全檢查 3：嚴格防範 NaN。給予預設值，若無血量資料則滿血，確保計算出來的一定是安全數字
+        const maxHp = player.maxHp || 100;
+        const hp = typeof player.hp === 'number' ? player.hp : maxHp;
+        
+        const currentHpWidth = Math.max(0, (hp / maxHp) * 60);
         this.players[id].hpBar.setSize(currentHpWidth, 8);
 
         this.players[id].name.x = player.x;
