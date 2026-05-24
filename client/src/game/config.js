@@ -5,12 +5,12 @@ import MainScene from "./MainScene";
 export default {
   type: Phaser.AUTO,
 
-  parent: "game-container",
-
+  scale: {
+  mode: Phaser.Scale.Fit,
+  autoCenter: Phaser.Scale.CENTER_BOTH,
   width: window.innerWidth,
-
   height: window.innerHeight,
-
+  },
   physics: {
     default: "arcade",
   },
