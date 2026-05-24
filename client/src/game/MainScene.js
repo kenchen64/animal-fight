@@ -115,37 +115,40 @@ export default class MainScene extends Phaser.Scene {
       up: "W", down: "S", left: "A", right: "D", attack: "J", skill: "K",
     });
 
-    // 確保 DOM 載入後才執行搖桿初始化
-    this.time.delayedCall(100, () => {
-      this.createJoystick();
-    });
-  }
+ create() {
+  // 📌 修正：延遲 200 毫秒執行，確保手機/電腦的 DOM 容器已經完全渲染並抓得到
+  this.time.delayedCall(200, () => {
+    this.createJoystick();
+  });
+}
 
-  createJoystick() {
+createJoystick() {
+  this.joyX = 0;
+  this.joyY = 0;
+
+  // 📌 修正安全機制：如果找不到 game-container，就綁定到 body 上，確保一定能動
+  const targetElement = document.getElementById("game-container") || document.body;
+
+  this.joystick = nipplejs.create({
+    zone: targetElement,
+    mode: "static",
+    position: { left: "100px", bottom: "100px" }, // 往內縮一點，避免觸控被手機邊緣手勢吃掉
+    size: 120,
+    color: "white",
+  });
+
+  this.joystick.on("move", (evt, data) => {
+    if (!data.vector) return;
+    this.joyX = data.vector.x;
+    this.joyY = data.vector.y;
+  });
+
+  this.joystick.on("end", () => {
     this.joyX = 0;
     this.joyY = 0;
+  });
+}
 
-    const targetElement = document.getElementById("game-container") || document.body;
-
-    this.joystick = nipplejs.create({
-      zone: targetElement,
-      mode: "static",
-      position: { left: "100px", bottom: "100px" }, // 稍微往內移防止手機邊緣遮擋
-      size: 120,
-      color: "white",
-    });
-
-    this.joystick.on("move", (evt, data) => {
-      if (!data.vector) return;
-      this.joyX = data.vector.x;
-      this.joyY = data.vector.y;
-    });
-
-    this.joystick.on("end", () => {
-      this.joyX = 0;
-      this.joyY = 0;
-    });
-  }
 
   update() {
     const me = this.players[socket.id];
