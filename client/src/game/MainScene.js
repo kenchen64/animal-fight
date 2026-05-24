@@ -118,16 +118,17 @@ export default class MainScene extends Phaser.Scene {
     this.joyX = 0;
     this.joyY = 0;
 
-    // 雙重安全機制檢查
-    let targetElement = document.getElementById("game-container");
+    // 📌 修正：改為抓取我們剛剛在 index.html 建立的獨立搖桿容器
+    let targetElement = document.getElementById("joystick-container");
+    
     if (!targetElement) {
-      console.warn("未偵測到 #game-container，搖桿改為綁定至 document.body");
+      console.warn("未偵測到 #joystick-container，搖桿改為綁定至 document.body");
       targetElement = document.body;
     }
 
     try {
       this.joystick = nipplejs.create({
-        zone: targetElement,
+        zone: targetElement, // 綁定到獨立的透明層
         mode: "static",
         position: { left: "100px", bottom: "100px" }, 
         size: 120,
@@ -145,7 +146,7 @@ export default class MainScene extends Phaser.Scene {
         this.joyY = 0;
       });
       
-      console.log("NippleJS 搖桿載入成功");
+      console.log("NippleJS 搖桿成功綁定至獨立容器！");
     } catch (error) {
       console.error("NippleJS 初始化發生異常:", error);
     }
