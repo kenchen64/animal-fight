@@ -191,22 +191,35 @@ export default class MainScene extends Phaser.Scene {
     let vx = 0;
     let vy = 0;
 
-    if (this.keys.left.isDown) vx = -speed;
-    if (this.keys.right.isDown) vx = speed;
-    if (this.keys.up.isDown) vy = -speed;
-    if (this.keys.down.isDown) vy = speed;
+  
+  // 1. 優先判斷鍵盤
+  if (this.keys.left.isDown) vx = -speed;
+  if (this.keys.right.isDown) vx = speed;
+  if (this.keys.up.isDown) vy = -speed;
+  if (this.keys.down.isDown) vy = speed;
 
-    if (vx === 0 && vy === 0 && (this.joyX !== 0 || this.joyY !== 0)) {
+  // 2. 若鍵盤沒動，則啟用搖桿
+  if (vx === 0 && vy === 0) {
+    const deadzone = 0.1; // 避免搖桿微小抖動卡死
+    
+    // 檢查搖桿是否超過死區
+    const isJoyMoving = Math.abs(this.joyX) > deadzone || Math.abs(this.joyY) > deadzone;
+
+    if (isJoyMoving) {
       vx = this.joyX * speed;
-      vy = this.joyY * speed * -1; 
+      // 📌 修正：NippleJS 往上推 y 是正的，Phaser 往上游戲角色 y 要變小(減少)，所以要用「減法」
+      // 這裡直接保留正負號，發送時再調整，或者在此直接計算
+      vy = -this.joyY * speed; 
     }
+  }
 
-    if (vx !== 0 || vy !== 0) {
-      socket.emit("move", {
-        x: me.sprite.x + vx,
-        y: me.sprite.y + vy
-      });
-    }
+  // 3. 只有當速度大於 0 時才發送給後端
+  if (vx !== 0 || vy !== 0) {
+    socket.emit("move", {
+      x: me.sprite.x + vx,
+      y: me.sprite.y + vy
+    });
+  }
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.attack)) {
       this.findAndAttack("attack");
