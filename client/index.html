@@ -6,6 +6,39 @@
 
     <title>Animal Brawl</title>
     <style>
+/* 基礎重設，確保網頁滿版且不出現滾動條 */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+}
+
+#game-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 📌 當手機處於「直向 (Portrait)」時的強制旋轉防護 */
+@media screen and (orientation: portrait) {
+  #game-container {
+    transform: rotate(90deg);
+    transform-origin: bottom left;
+    position: absolute;
+    top: -100vw;
+    left: 0;
+    width: 100vh;
+    height: 100vw;
+  }
+  
+  /* 搖桿容器也要跟著旋轉或重新定位 */
+  #joystick-container {
+    transform: rotate(90deg);
+    /* 根據旋轉後的視窗重新定位你的搖桿 */
+  }
+}
 
       /* 📌 新增：單獨給搖桿使用的全螢幕/透明層，確保觸控不會與遊戲畫布衝突 */
       #joystick-container {
