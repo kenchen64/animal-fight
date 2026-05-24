@@ -86,7 +86,10 @@ io.on('connection', socket => {
     players[socket.id].x = data.x
     players[socket.id].y = data.y
 
-    io.emit('players', players)
+setInterval(() => {
+  io.emit("players",players
+  );
+}, 50);
   })
 
   socket.on('attack', targetId => {
